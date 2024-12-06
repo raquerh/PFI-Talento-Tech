@@ -15,10 +15,10 @@ def mostrar_menu():
     print("Menú de Gestión de Productos\n")
     print("1. Alta de productos nuevos")
     print("2. Listado completo de productos")
-    print("3. Actualizar cantidad de un producto")
+    print("3. Actualizar el stock de un producto")
     print("4. Baja de producto")
     print("5. Consulta de productos")
-    print("6. Lista de productos con bajo stock")
+    print("6. Reporte de productos con bajo stock")
     print("7. Salir\n")
 
 def obtener_opcion():
@@ -43,30 +43,30 @@ def alta_productos():
     # Usamos el bucle while para ingresar los datos
     while True:
         
-        nombre = input("Ingresá el nombre del producto: ").upper()
-        descripcion = input("Ingresá su descripción: ").upper()
-        cantidad = int(input("Ingresá la cantidad del producto: "))
-        precio = float(input("Ingresá su precio unitario: "))
-        categoria = input("Ingresá la categoria a la que pertenece el producto: ").upper()
+        NOMBRE = input("Ingresá el NOMBRE del producto: ").upper()
+        DESCRIPCION = input("Ingresá su DESCRIPCION: ").upper()
+        CANTIDAD = int(input("Ingresá la CANTIDAD del producto: "))
+        PRECIO = float(input("Ingresá su PRECIO unitario: "))
+        CATEGORIA = input("Ingresá la CATEGORIA a la que pertenece el producto: ").upper()
 
-    # Verificar si ya existe un producto con la misma descripción
+    # Verificar si ya existe un producto con la misma DESCRIPCION
         cursor.execute('''
-            SELECT COUNT(*) FROM productos WHERE descripcion = ?;
-        ''', (descripcion,))
+            SELECT COUNT(*) FROM productos WHERE DESCRIPCION = ?;
+        ''', (DESCRIPCION,))
         count = cursor.fetchone()[0]
 
         if count > 0:
-            print("Ya existe un producto con la misma descripción. No se puede agregar.")
+            print("Ya existe un producto con la misma DESCRIPCION. No se puede agregar.")
         else:
             cursor.execute('''
-                INSERT INTO productos (nombre, descripcion, cantidad, precio, categoria) VALUES
+                INSERT INTO productos (NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA) VALUES
                 (?, ?, ?, ?, ?);
-            ''', (nombre, descripcion, cantidad, precio, categoria))
+            ''', (NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA))
             conexion.commit()
             print("Producto agregado correctamente.")
             
             # Agregar el producto a la lista de productos agregados
-            productos_agregados.append((nombre, descripcion, cantidad, precio, categoria))
+            productos_agregados.append((NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA))
             
         print("")
         salida = input("Desea agregar otro producto? (s/n): ").upper()
@@ -78,8 +78,8 @@ def alta_productos():
     print("\nProductos ingresados en esta sesion:\n")
     
     for producto in productos_agregados:
-        nombre, descripcion, cantidad, precio, categoria = producto
-        print(f"Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}")
+        NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = producto
+        print(f"NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}")
         print("")
         
     conexion.close()
@@ -96,8 +96,8 @@ def listado_completo():
         cursor.execute("SELECT * FROM productos")
         productos = cursor.fetchall()
         for producto in productos:
-            id, nombre, descripcion, cantidad, precio, categoria = producto
-            print(f"ID: {id}, Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}")
+            id, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = producto
+            print(f"ID: {id}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}")
             print("")
     else:
         # Mostrar mensaje
@@ -105,19 +105,18 @@ def listado_completo():
 
     conexion.close()
     
-def actualizar_cantidad():
+def actualizar_CANTIDAD():
     conexion = sqlite3.connect("inventario.db")
     cursor = conexion.cursor()
-    print("\nActualización de cantidad de productos\n")
+    print("\nActualización el stock de productos\n")
 
     while True:
-        # Solicitar al usuario el ID del producto y la nueva cantidad
+        # Solicitar al usuario el ID del producto y la nueva CANTIDAD
         id_producto = int(input("Ingresá el ID del producto que deseas actualizar: "))
-        nueva_cantidad = int(input("Ingresá la nueva cantidad disponible: "))
-
-        # Verificar si el ID existe y obtener la cantidad anterior
+        
+        # Verificar si el ID existe y obtener la CANTIDAD anterior
         cursor.execute('''
-            SELECT cantidad, nombre, descripcion, precio, categoria FROM productos WHERE id = ?;
+            SELECT CANTIDAD, NOMBRE, DESCRIPCION, PRECIO, CATEGORIA FROM productos WHERE ID = ?;
         ''', (id_producto,))
         resultado = cursor.fetchone()
 
@@ -126,26 +125,32 @@ def actualizar_cantidad():
             print("No existe un producto con el ID proporcionado.")
             print("")
         else:
-            cantidad_anterior, nombre, descripcion, precio, categoria = resultado
+            cantidad_anterior, NOMBRE, DESCRIPCION, PRECIO, CATEGORIA = resultado
 
-            # Actualizar la cantidad del producto
+            # Imprimir la información del producto antes de solicitar la nueva CANTIDAD
+            print("\nProducto seleccionado:")
+            print(f"ID: {ID}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD_anterior}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}\n")
+
+            # Solicitar la nueva CANTIDAD
+            nueva_cantidad = int(input("Ingresá la nueva cantidad disponible: "))
+
+            # Actualizar la CANTIDAD del producto
             cursor.execute('''
-                UPDATE productos SET cantidad = ? WHERE id = ?;
+                UPDATE productos SET CANTIDAD = ? WHERE ID = ?;
             ''', (nueva_cantidad, id_producto))
             conexion.commit()
 
             # Imprimir la información del producto modificado
             print("\nProducto modificado:")
             print("")
-            print(f"ID: {id_producto}, Nombre: {nombre}, Descripción: {descripcion}, Precio: {precio}, Categoría: {categoria}")
-            print(f"Cantidad anterior: {cantidad_anterior}, Cantidad actual: {nueva_cantidad}")
+            print(f"ID: {id_producto}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}")
+            print(f"CANTIDAD ANTERIOR: {cantidad_anterior}, CANTIDAD ACTUAL: {nueva_cantidad}")
             print("")
             
-        salida = input("Desea modificar la cantidad de otro producto? (s/n): ").upper()
+        salida = input("Desea modificar el stock de otro producto? (s/n): ").upper()
         print("")
         if salida == "N":
             break
-
     conexion.close()
 
 def eliminar_producto():
@@ -158,20 +163,20 @@ def eliminar_producto():
         # Solicitar el ID del producto a eliminar
         id_producto = int(input("Ingresá el ID del producto que deseas eliminar: "))
         cursor.execute('''
-            SELECT cantidad, nombre, descripcion, precio, categoria FROM productos WHERE id = ?;
+            SELECT CANTIDAD, NOMBRE, DESCRIPCION, PRECIO, CATEGORIA FROM productos WHERE ID = ?;
         ''', (id_producto,))
         resultado = cursor.fetchone()
 
         if resultado is None:
             print("\nNo existe un producto con el ID proporcionado.\n")
         else:
-            cantidad, nombre, descripcion, precio, categoria = resultado
-            seguro = input(f"¿Está seguro que desea eliminar el producto:\n ID: {id_producto}, Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}\n (s/n) ").upper()
+            CANTIDAD, NOMBRE, DESCRIPCION, PRECIO, CATEGORIA = resultado
+            seguro = input(f"¿Está seguro que desea eliminar el producto:\n ID: {id_producto}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}\n (s/n) ").upper()
             print("")
             if seguro == "S":
-                productos_eliminados.append((id_producto, nombre, descripcion, cantidad, precio, categoria))
+                productos_eliminados.append((id_producto, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA))
                 cursor.execute('''
-                    DELETE FROM productos WHERE id = ?;
+                    DELETE FROM productos WHERE ID = ?;
                 ''', (id_producto,))
                 conexion.commit()
                 print(f"Producto con ID {id_producto} eliminado correctamente.\n")
@@ -187,8 +192,8 @@ def eliminar_producto():
     if productos_eliminados:
         print("\nProductos eliminados en esta sesión:\n")
         for producto in productos_eliminados:
-            id_producto, nombre, descripcion, cantidad, precio, categoria = producto
-            print(f"ID: {id_producto}, Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}")
+            id_producto, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = producto
+            print(f"ID: {id_producto}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}")
         print("")
 
     conexion.close()
@@ -200,12 +205,12 @@ def consulta_producto():
     
     while True:
         print("\nOpciones de búsqueda:\n")
-        print("1. Buscar por ID")
-        print("2. Buscar por nombre")
-        print("3. Buscar por descripción")
-        print("4. Buscar por cantidad")
-        print("5. Buscar por precio")
-        print("6. Buscar por categoria")
+        print("1. Por ID")
+        print("2. Por NOMBRE")
+        print("3. Por DESCRIPCION")
+        print("4. Por CANTIDAD")
+        print("5. Por PRECIO")
+        print("6. Por CATEGORIA")
         print("")
         opcion_busqueda = int(input("Selecciona una opción (1-6): \n"))
         print("")
@@ -213,76 +218,82 @@ def consulta_producto():
 
         match opcion_busqueda:
             case 1:  # Buscar por ID
-                id_producto = int(input("Ingrese el código del producto: "))
+                id_producto = int(input("Ingrese el codigo del producto: "))
                 cursor.execute('''
-                    SELECT id, nombre, descripcion, cantidad, precio, categoria FROM productos WHERE id = ?;
+                    SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA FROM productos WHERE ID = ?;
                 ''', (id_producto,))
                 resultado = cursor.fetchone()
                 if resultado is None:
                     print("\nNo existe un producto con el ID proporcionado.\n")
                 else:
-                    id, nombre, descripcion, cantidad, precio, categoria = resultado
-                    print(f"ID: {id}, Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}\n")
+                    ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
+                    print(f"ID: {ID}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}\n")
 
-            case 2:  # Buscar por nombre
-                nombre_producto = input("Ingrese el código del producto: ").upper()
+            case 2:  # Buscar por NOMBRE
+                Nnombre_producto = input("Ingrese el nombre del producto: ").upper()
                 cursor.execute('''
-                    SELECT id, nombre, descripcion, cantidad, precio, categoria FROM productos WHERE nombre = ?;
-                ''', (nombre_producto,))
-                resultado = cursor.fetchall()
-                if resultado is None:
-                    print("\nNo existe un producto con el nombre proporcionado.\n")
+                    SELECT id, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA FROM productos WHERE UPPER(NOMBRE) LIKE ?;
+                ''', (f"%{nombre_producto}%",))
+                resultados = cursor.fetchall()
+                if not resultados:
+                    print("\nNo hay productos con el nombre proporcionado.\n")
                 else:
-                    id, nombre, descripcion, cantidad, precio, categoria = resultado
-                    print(f"ID: {id}, Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}\n")
+                    for resultado in resultados:
+                        ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
+                        print(f"ID: {ID}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}\n")
 
-            case 3:  # Buscar por descripción
-                descripcion_producto = input("Ingrese la descripción del producto: ").upper()
+            case 3:  # Buscar por DESCRIPCION
+                DESCRIPCION_producto = input("Ingrese la descripcion del producto: ").upper()
+                print("")
                 cursor.execute('''
-                    SELECT id, nombre, descripcion, cantidad, precio, categoria FROM productos WHERE descripcion = ?;
-                ''', (descripcion_producto,))
-                resultado = cursor.fetchone()
-                if resultado is None:
-                    print("\nNo existe un producto con esa descripción.\n")
+                    SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA FROM productos WHERE UPPER(DESCRIPCION) LIKE ?;
+                ''', (f"%{descripcion_producto}%",))
+                resultados = cursor.fetchall()
+                if not resultados:
+                    print("\nNo hay productos con esa descripcion.\n")
                 else:
-                    id, nombre, descripcion, cantidad, precio, categoria = resultado
-                    print(f"ID: {id}, Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}\n")
+                    for resultado in resultados:
+                        ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
+                        print(f"ID: {ID}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}\n")
 
-            case 4:  # Buscar por cantidad
-                cantidad = int(input("Ingrese la cantidad del producto: "))
+            case 4:  # Buscar por CANTIDAD
+                cantidad_producto = int(input("Ingrese la cantidad del producto: "))
                 cursor.execute('''
-                    SELECT id, nombre, descripcion, cantidad, precio, categoria FROM productos WHERE cantidad = ?;
-                ''', (cantidad,))
-                resultado = cursor.fetchone()
-                if resultado is None:
-                    print("\nNo existe un producto con esa cantidad.\n")
+                    SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA FROM productos WHERE CANTIDAD = ?;
+                ''', (cantidad_producto,))
+                resultados = cursor.fetchall()
+                if not resultados:
+                    print("\nNo hay productos con esa cantidad.\n")
                 else:
-                    id, nombre, descripcion, cantidad, precio, categoria = resultado
-                    print(f"ID: {id}, Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}\n")
+                    for resultado in resultados:
+                        ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
+                        print(f"ID: {ID}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}\n")
 
-            case 5:  # Buscar por precio
-                precio = float(input("Ingrese el precio del producto: "))
+            case 5:  # Buscar por PRECIO
+                precio_producto = float(input("Ingrese el precio del producto: "))
                 cursor.execute('''
-                    SELECT id, nombre, descripcion, cantidad, precio, categoria FROM productos WHERE precio = ?;
-                ''', (precio,))
-                resultado = cursor.fetchone()
-                if resultado is None:
-                    print("\nNo existe un producto con ese precio.\n")
+                    SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA FROM productos WHERE PRECIO = ?;
+                ''', (precio_producto,))
+                resultados = cursor.fetchall()
+                if not resultados:
+                    print("\nNo hay productos con ese precio.\n")
                 else:
-                    id, nombre, descripcion, cantidad, precio, categoria = resultado
-                    print(f"ID: {id}, Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}\n")
+                    for resultado in resultados:
+                        ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
+                        print(f"ID: {ID}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}\n")
 
-            case 6:  # Buscar por categoria
-                categoria_producto = input("Ingrese la categoria del producto: ").upper()
+            case 6:  # Buscar por CATEGORIA
+                categoria_producto = input("Ingrese la CATEGORIA del producto: ").upper()
                 cursor.execute('''
-                    SELECT id, nombre, descripcion, cantidad, precio, categoria FROM productos WHERE categoria = ?;
-                ''', (categoria_producto,))
-                resultado = cursor.fetchall()
-                if resultado is None:
-                    print("\nNo existen productos con esa categoria.\n")
+                    SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA FROM productos WHERE UPPER(CATEGORIA) LIKE ?;
+                ''', (f"%{categoria_producto}%",))
+                resultados = cursor.fetchall()
+                if not resultados:
+                    print("\nNo hay productos con esa categoria.\n")
                 else:
-                    id, nombre, descripcion, cantidad, precio, categoria = resultado
-                    print(f"ID: {id}, Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}\n")
+                    for resultado in resultados:
+                        ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
+                        print(f"ID: {ID}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}\n")
 
             case _:  # Opción no válida
                 print("Opción no válida. Por favor, elige una opción entre 1 y 6.")
@@ -290,7 +301,6 @@ def consulta_producto():
         seguir = input("¿Desea buscar otro producto? (S/N): ").upper()  # Pregunta si desea seguir buscando  
         if seguir == "N":
             break
-
     conexion.close()
 
 def reporte_bajo_stock():
@@ -299,31 +309,30 @@ def reporte_bajo_stock():
     print("\nReporte de bajo stock\n")
     productos_bajo_stock = []
 
-    cant_bajo_stock = int(input("Ingrese la cantidad para generar un reporte de los productos que tienen stock menor a esta cantidad: "))
+    cant_bajo_stock = int(input("Ingrese la cantidad para generar un reporte de los productos que tienen stock menor: "))
     cursor.execute('''
-        SELECT id, nombre, descripcion, cantidad, precio, categoria FROM productos WHERE cantidad <= ?;
+        SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA FROM productos WHERE CANTIDAD <= ?;
     ''', (cant_bajo_stock,))
     resultados = cursor.fetchall()
 
     for resultado in resultados:
-        id, nombre, descripcion, cantidad, precio, categoria = resultado
-        productos_bajo_stock.append((id, nombre, descripcion, cantidad, precio, categoria))
+        ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
+        productos_bajo_stock.append((ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA))
 
     # Imprimir los productos con bajo stock
     if productos_bajo_stock:
         print("\nProductos con bajo stock:\n")
         for producto in productos_bajo_stock:
-            id, nombre, descripcion, cantidad, precio, categoria = producto
-            print(f"ID: {id}, Nombre: {nombre}, Descripción: {descripcion}, Cantidad: {cantidad}, Precio: {precio}, Categoría: {categoria}")
+            ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = producto
+            print(f"ID: {ID}, NOMBRE: {NOMBRE}, DESCRIPCION: {DESCRIPCION}, CANTIDAD: {CANTIDAD}, PRECIO: {PRECIO}, CATEGORIA: {CATEGORIA}")
     else:
-        print("No hay productos con stock por debajo de la cantidad especificada.")
-
+        print("No hay productos con stock por debajo de la CANTIDAD especificada.")
     conexion.close()
     
 while True:
 
     mostrar_menu()
-    obtener_opcion()
+    opcion = obtener_opcion()
 
     match opcion:
         case 1:
@@ -331,7 +340,7 @@ while True:
         case 2:
             listado_completo()
         case 3:
-            actualizar_cantidad()
+            actualizar_CANTIDAD()
         case 4:
             eliminar_producto()
         case 5:
