@@ -2,8 +2,8 @@ El proyecto se trata de crear un sistema de inventariode un comercio con Python 
 
 La base de datos consta de una unica tabla de productos, llamada inventario.db, con datos de productos para motos: accesorios, repuestos, etc.
 
+Mediante un menu podemos elegir entre las siguientes funciones:
 
-FUNCIONALIDADES:
     ● Alta de nuevos productos: agregar nuevos productos al inventario, solicitando los siguientes datos: nombre, descripción, cantidad, precio y categoría.
     ● Listado completo de productos: nostrar todos los productos registrados en el inventario, incluyendo su ID, nombre, descripción, cantidad, precio y categoría.
     ● Actualización de productos: actualizar la cantidad disponible de un producto específico utilizando su ID.
