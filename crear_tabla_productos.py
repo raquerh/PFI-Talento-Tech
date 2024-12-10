@@ -18,7 +18,8 @@ def crear_tabla_productos():
     # cursor.execute('''
     #     DROP TABLE IF EXISTS productos;
     #     ''')
-    # Crear la tabla Productos si no existe
+    
+    #Crear la tabla Productos si no existe
     cursor.execute('''
         CREATE TABLE productos (
             ID      INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,8 +68,9 @@ def crear_tabla_productos():
         ('PINTURA EN SPRAY', 'PINTURA ESPECIAL PARA RESTAURAR EL COLOR DE CARENADOS', 40, 12.00, 'MANTENIMIENTO'),
         ('MANILLARES DEPORTIVOS', 'MANILLARES DE ALUMINIO AJUSTABLES PARA MAYOR CONFORT', 20, 40.00, 'REPUESTOS'),
         ('CASCO MODULAR', 'CASCO MODULAR CON DOBLE VISERA Y SISTEMA DE VENTILACION', 15, 135.00, 'ACCESORIOS'),
-        ('ACEITE PARA CADENA', 'LUBRICANTE EN SPRAY PARA CADENAS DE TRANSMISION', 50, 10.99, 'MANTENIMIENTO');
-
+        ('ACEITE PARA CADENA', 'LUBRICANTE EN SPRAY PARA CADENAS DE TRANSMISION', 50, 10.99, 'MANTENIMIENTO'),
+        ('LLAVERO', 'LLAVERO DE GOMA VARIOS DISEÑOS', 100, 100, 'ACCESORIOS'),
+        ('FARO TRASERO', 'FARO TRASERO DE LED, CON GIROS INCLUIDOS', 49 ,200, 'REPUESTOS');
     ''')
 
     # Confirmar la creación de la tabla y cerrar la conexión
