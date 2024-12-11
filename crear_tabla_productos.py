@@ -21,7 +21,7 @@ def crear_tabla_productos():
     
     #Crear la tabla Productos si no existe
     cursor.execute('''
-        CREATE TABLE productos (
+        CREATE TABLE IF NOT EXISTS productos (
             ID      INTEGER PRIMARY KEY AUTOINCREMENT,
             NOMBRE   TEXT    NOT NULL,
             DESCRIPCION TEXT  NOT NULL,

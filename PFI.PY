@@ -67,11 +67,11 @@ def alta_productos():
     # Usamos el bucle while para ingresar los datos
     while True:
         
-        NOMBRE = input("Ingresá el NOMBRE del producto: ").upper()
-        DESCRIPCION = input("Ingresá su DESCRIPCION: ").upper()
-        CANTIDAD = int(input("Ingresá la CANTIDAD del producto: "))
-        PRECIO = float(input("Ingresá su PRECIO unitario: "))
-        CATEGORIA = input("Ingresá la CATEGORIA a la que pertenece el producto: ").upper()
+        NOMBRE = input("Ingresá el nombre del producto: ").upper()
+        DESCRIPCION = input("Ingresá su descripcion: ").upper()
+        CANTIDAD = int(input("Ingresá la cantidad del producto: "))
+        PRECIO = float(input("Ingresá su precio unitario: "))
+        CATEGORIA = input("Ingresá la categoria a la que pertenece: ").upper()
 
     # Verificar si ya existe un producto con la misma DESCRIPCION
         cursor.execute('''
