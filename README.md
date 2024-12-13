@@ -19,3 +19,4 @@ Mediante un menu podemos elegir entre las siguientes funciones:
 ● Búsqueda de productos: buscar productos por su ID, nombre, descripción, cantidad, precio o categoría, mostrando los resultados que coincidan con los criterios de búsqueda.
 
 ● Reporte de Bajo Stock: generar un reporte de productos que tengan una cantidad igual o inferior a un límite especificado por el usuario.
+
