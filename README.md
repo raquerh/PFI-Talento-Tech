@@ -4,7 +4,7 @@ La base de datos, llamada inventario.db, consta de una unica tabla de productos,
 
 El archivo crear_tabla_productos.py es justamente lo que su nombre indica, la creacion de la tabla en Python.
 
-Se utilizo colorama para dar color cuando se ejecute en consola.
+Se utilizo colorama para dar color cuando se ejecute en consola. Si no lo tiene se debe instalar con pip install colorama.
 
 Mediante un menu podemos elegir entre las siguientes funciones:
 

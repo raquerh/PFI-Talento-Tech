@@ -9,7 +9,9 @@ FUNCIONALIDADES:
 
 '''
 import colorama
-from colorama import Fore, Back, Style
+from colorama import Fore, Back, Style, init
+init(autoreset=True)
+
 import sqlite3
 
 def inicio_conexion():
@@ -20,46 +22,54 @@ def inicio_conexion():
 def fin_conexion(conexion):
     conexion.commit()
     conexion.close()
-    
-def limpiar_color():
-    print(Back.RESET + Fore.RESET)
 
 def mostrar_menu():
 
+    print(Fore.YELLOW + "********************************")
+    print(Fore.YELLOW + "* MENU DE GESTION DE PRODUCTOS *")
+    print(Fore.YELLOW + "********************************")
     print("")
-    print(Fore.YELLOW)
-    print("********************************")
-    print("* MENU DE GESTION DE PRODUCTOS *")
-    print("********************************")
-    print("")
-    print("1. Alta de productos nuevos")
-    print("2. Listado completo de productos")
-    print("3. Actualizar el stock de un producto")
-    print("4. Baja de producto")
-    print("5. Consulta de productos")
-    print("6. Reporte de productos con bajo stock")
-    print("7. Salir\n")
-    limpiar_color()
+    print(Fore.YELLOW + "1. Alta de productos nuevos")
+    print(Fore.YELLOW + "2. Listado completo de productos")
+    print(Fore.YELLOW + "3. Actualizar el stock de un producto")
+    print(Fore.YELLOW + "4. Baja de producto")
+    print(Fore.YELLOW + "5. Consulta de productos")
+    print(Fore.YELLOW + "6. Reporte de productos con bajo stock")
+    print(Fore.YELLOW + "7. Salir\n")
 
 def obtener_opcion():
     while True:
-        print("")
-        opcion = int(input("Por favor, selecciona una opción (1-7): "))
+        opcion = int(input("\nPor favor, selecciona una opción (1-7): "))
         print("")
         if 1 <= opcion <= 7:
+
             return opcion
-            
         else:
             print(Back.BLACK + Fore.RED + "Opción no válida. Por favor, elige una opción entre 1 y 7.")
-        limpiar_color()
         
+def mostrar_opcion(opcion):
+    match opcion:
+        case 1:
+            print(Fore.CYAN + Style.BRIGHT + "Ha seleccionado la opcion 1 - Alta de productos nuevos")
+        case 2:
+            print(Fore.CYAN + Style.BRIGHT + "Ha seleccionado la opcion 2 - Listado completo de productos")
+        case 3:    
+            print(Fore.CYAN + Style.BRIGHT + "Ha seleccionado la opcion 3 - Actualizar el stock de un producto")
+        case 4:    
+            print(Fore.CYAN + Style.BRIGHT + "Ha seleccionado la opcion 4 - Baja de un productos")
+        case 5:    
+            print(Fore.CYAN + Style.BRIGHT + "Ha seleccionado la opcion 5 - Consulta de productos")
+        case 6:    
+            print(Fore.CYAN + Style.BRIGHT + "Ha seleccionado la opcion 6 - Reporte de productos con bajo stock")
+        case 7:    
+            print(Fore.CYAN + Style.BRIGHT + "Ha seleccionado la opcion 7 - Salir")
+
 def alta_productos():
     
     conexion, cursor = inicio_conexion()
-    
+    print("")
     print(Fore.YELLOW + "\nIngreso de nuevos productos\n")
-    print("---------------------------")
-    limpiar_color()
+    print(Fore.YELLOW + "---------------------------")
 
     # Lista para almacenar los productos agregados en esta sesión
     productos_agregados = []
@@ -67,7 +77,7 @@ def alta_productos():
     # Usamos el bucle while para ingresar los datos
     while True:
         
-        NOMBRE = input("Ingresá el nombre del producto: ").upper()
+        NOMBRE = input("\nIngresá el nombre del producto: ").upper()
         DESCRIPCION = input("Ingresá su descripcion: ").upper()
         CANTIDAD = int(input("Ingresá la cantidad del producto: "))
         PRECIO = float(input("Ingresá su precio unitario: "))
@@ -81,7 +91,6 @@ def alta_productos():
 
         if count > 0:
             print(Back.BLACK + Fore.RED + "Ya existe un producto con la misma descripcion. No se puede agregar.")
-            limpiar_color()
             
         else:
             cursor.execute('''
@@ -89,7 +98,7 @@ def alta_productos():
                 (?, ?, ?, ?, ?);
             ''', (NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA))
             conexion.commit()
-            print("Producto agregado correctamente.")
+            print(Fore.CYAN + Style.BRIGHT + "Producto agregado correctamente.")
             
             # Agregar el producto a la lista de productos agregados
             productos_agregados.append((NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA))
@@ -108,7 +117,6 @@ def alta_productos():
         print(f" NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {CANTIDAD}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
         
     fin_conexion(conexion)
-    limpiar_color()
     
 def listado_completo():
     
@@ -121,8 +129,7 @@ def listado_completo():
         # Mostrar productos
         print(Fore.YELLOW + "\nListado completo de productos:\n")
         print("------------------------------")
-        limpiar_color()
-        
+
         cursor.execute("SELECT * FROM productos")
         productos = cursor.fetchall()
         for producto in productos:
@@ -134,19 +141,17 @@ def listado_completo():
         print(Back.BLACK + Fore.RED + "\nNo hay productos en el inventario.\n")
     
     fin_conexion(conexion)
-    limpiar_color()
-    
+
 def actualizar_cantidad():
     
     conexion, cursor = inicio_conexion()
     
     print(Fore.YELLOW + "\nActualización el stock de productos\n")
-    print("-----------------------------------")
-    limpiar_color()
+    print(Fore.YELLOW + "-----------------------------------")
 
     while True:
         # Solicitar al usuario el ID del producto y la nueva CANTIDAD
-        id_producto = int(input("Ingresá el ID del producto que deseas actualizar: "))
+        id_producto = int(input("\nIngresá el ID del producto que deseas actualizar: "))
         
         # Verificar si el ID existe y obtener la CANTIDAD anterior
         cursor.execute('''
@@ -156,14 +161,12 @@ def actualizar_cantidad():
 
         if resultado is None:
             print(Back.BLACK + Fore.RED + "\nNo existe un producto con el ID proporcionado.\n")
-            limpiar_color()
         else:
             cantidad_anterior, NOMBRE, DESCRIPCION, PRECIO, CATEGORIA = resultado
 
             # Imprimir la información del producto antes de solicitar la nueva CANTIDAD
             print(Fore.BLUE + "\nProducto seleccionado:\n")
             print(f" ID: {id_producto}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {cantidad_anterior}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
-            limpiar_color()
 
             # Solicitar la nueva CANTIDAD
             nueva_cantidad = int(input("Ingresá la nueva cantidad disponible: "))
@@ -178,7 +181,6 @@ def actualizar_cantidad():
             print(Fore.LIGHTBLUE_EX + "\nProducto modificado:\n")
             print(f" ID: {id_producto}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
             print(Fore.CYAN + f"    CANTIDAD ANTERIOR: {cantidad_anterior}\n    CANTIDAD ACTUAL: {nueva_cantidad}\n")
-            limpiar_color()
             
         salida = input("Desea modificar el stock de otro producto? (s/n): ").upper()
         print("")
@@ -186,21 +188,19 @@ def actualizar_cantidad():
             break
     
     fin_conexion(conexion)
-    limpiar_color()
 
 def eliminar_producto():
     
     conexion, cursor = inicio_conexion()
     
-    print(Fore.YELLOW + "\nEliminar un producto\n")
-    print("--------------------")
-    limpiar_color()
-    
+    print(Fore.YELLOW + "\nEliminar un producto")
+    print(Fore.YELLOW + "--------------------")
+
     productos_eliminados = []
 
     while True:
         # Solicitar el ID del producto a eliminar
-        id_producto = int(input("Ingresá el ID del producto que deseas eliminar: "))
+        id_producto = int(input("\nIngresá el ID del producto que deseas eliminar: "))
         cursor.execute('''
             SELECT CANTIDAD, NOMBRE, DESCRIPCION, PRECIO, CATEGORIA FROM productos WHERE ID = ?;
         ''', (id_producto,))
@@ -208,7 +208,6 @@ def eliminar_producto():
 
         if resultado is None:
             print(Back.BLACK + Fore.RED + "\nNo existe un producto con el ID proporcionado.\n")
-            limpiar_color()
         else:
             CANTIDAD, NOMBRE, DESCRIPCION, PRECIO, CATEGORIA = resultado
             seguro = input(Fore.RED + f"¿Está seguro que desea eliminar el producto:\n ID: {id_producto}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {CANTIDAD}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n \n(s/n) ").upper()
@@ -220,10 +219,9 @@ def eliminar_producto():
                     DELETE FROM productos WHERE ID = ?;
                 ''', (id_producto,))
                 conexion.commit()
-                print(f"Producto con ID {id_producto} eliminado correctamente.\n")
+                print(Fore.RED + Style.BRIGHT + f"Producto con ID {id_producto} eliminado correctamente.\n")
             else:
-                print(Fore.GREEN + f"El producto con ID {id_producto} no fue eliminado.\n")
-        limpiar_color()
+                print(Fore.CYAN + Style.BRIGHT + f"El producto con ID {id_producto} no fue eliminado.\n")
         
         salida = input("¿Desea eliminar otro producto? (s/n): ").upper()
         print("")
@@ -238,26 +236,22 @@ def eliminar_producto():
             print(f" ID: {id}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {CANTIDAD}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
 
     fin_conexion(conexion)
-    limpiar_color()
 
 def consulta_producto():
     
     conexion, cursor = inicio_conexion()
     
-    print(Fore.YELLOW + "\nConsulta Datos de Productos\n")
-    print("---------------------------")
-    limpiar_color()
+    print(Fore.YELLOW + "\nConsulta Datos de Productos")
+    print(Fore.YELLOW + "---------------------------")
     
     while True:
         print(Fore.YELLOW + "\nOpciones de búsqueda:\n")
-        print("1. Por ID")
-        print("2. Por NOMBRE")
-        print("3. Por DESCRIPCION")
-        print("4. Por CANTIDAD")
-        print("5. Por PRECIO")
-        print("6. Por CATEGORIA")
-        
-        limpiar_color()
+        print(Fore.YELLOW + "1. Por ID")
+        print(Fore.YELLOW + "2. Por NOMBRE")
+        print(Fore.YELLOW + "3. Por DESCRIPCION")
+        print(Fore.YELLOW + "4. Por CANTIDAD")
+        print(Fore.YELLOW + "5. Por PRECIO")
+        print(Fore.YELLOW + "6. Por CATEGORIA")
         
         opcion_busqueda = int(input("\nSelecciona una opción (1-6)"))
 
@@ -272,9 +266,9 @@ def consulta_producto():
                 resultado = cursor.fetchone()
                 if resultado is None:
                     print(Back.BLACK + Fore.RED + "\nNo existe un producto con el ID proporcionado.\n")
-                    limpiar_color()
                 else:
                     ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
+                    print(Fore.CYAN + Style.BRIGHT + "Resultado de su busqueda: ")
                     print(f" ID: {ID}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {CANTIDAD}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
 
             case 2:  # Buscar por NOMBRE
@@ -285,8 +279,8 @@ def consulta_producto():
                 resultados = cursor.fetchall()
                 if not resultados:
                     print(Back.BLACK + Fore.RED + "\nNo hay productos con el nombre proporcionado.\n")
-                    limpiar_color()
                 else:
+                    print(Fore.CYAN + Style.BRIGHT + "Resultado de su busqueda: ")
                     for resultado in resultados:
                         ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
                         print(f" ID: {ID}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {CANTIDAD}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
@@ -300,8 +294,8 @@ def consulta_producto():
                 resultados = cursor.fetchall()
                 if not resultados:
                     print(Back.BLACK + Fore.RED + "\nNo hay productos con esa descripcion.\n")
-                    limpiar_color()
                 else:
+                    print(Fore.CYAN + Style.BRIGHT + "Resultado de su busqueda: ")
                     for resultado in resultados:
                         ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
                         print(f" ID: {ID}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {CANTIDAD}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
@@ -314,8 +308,8 @@ def consulta_producto():
                 resultados = cursor.fetchall()
                 if not resultados:
                     print(Back.BLACK + Fore.RED + "\nNo hay productos con esa cantidad.\n")
-                    limpiar_color()
                 else:
+                    print(Fore.CYAN + Style.BRIGHT + "Resultado de su busqueda: ")
                     for resultado in resultados:
                         ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
                         print(f" ID: {ID}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {CANTIDAD}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
@@ -328,8 +322,8 @@ def consulta_producto():
                 resultados = cursor.fetchall()
                 if not resultados:
                     print(Back.BLACK + Fore.RED + "\nNo hay productos con ese precio.\n")
-                    limpiar_color()
                 else:
+                    print(Fore.CYAN + Style.BRIGHT + "Resultado de su busqueda: ")
                     for resultado in resultados:
                         ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
                         print(f" ID: {ID}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {CANTIDAD}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
@@ -342,34 +336,31 @@ def consulta_producto():
                 resultados = cursor.fetchall()
                 if not resultados:
                     print(Back.BLACK + Fore.RED + "\nNo hay productos con esa categoria.\n")
-                    limpiar_color()
                 else:
+                    print(Fore.CYAN + Style.BRIGHT + "Resultado de su busqueda: ")
                     for resultado in resultados:
                         ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = resultado
                         print(f" ID: {ID}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {CANTIDAD}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
 
             case _:  # Opción no válida
                 print(Back.BLACK + Fore.RED + "Opción no válida. Por favor, elige una opción entre 1 y 6.")
-                limpiar_color()
 
         seguir = input("¿Desea buscar otro producto? (S/N): ").upper()  # Pregunta si desea seguir buscando  
         if seguir == "N":
             break
     
     fin_conexion(conexion)
-    limpiar_color()
 
 def reporte_bajo_stock():
     
     conexion, cursor = inicio_conexion()
     
     print(Fore.YELLOW +"\nReporte de bajo stock\n")
-    print("---------------------")
-    limpiar_color()
+    print(Fore.YELLOW + "---------------------")
     
     productos_bajo_stock = []
 
-    cant_bajo_stock = int(input("Ingrese la cantidad para generar un reporte de los productos que tienen stock menor: "))
+    cant_bajo_stock = int(input("\nIngrese la cantidad para generar un reporte de los productos que tienen stock menor: "))
     cursor.execute('''
         SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA FROM productos WHERE CANTIDAD <= ?;
     ''', (cant_bajo_stock,))
@@ -381,7 +372,7 @@ def reporte_bajo_stock():
 
     # Imprimir los productos con bajo stock
     if productos_bajo_stock:
-        print(Fore.BLUE + f"\nProductos con stock menor a {cant_bajo_stock}\n")
+        print(Fore.CYAN + Style.BRIGHT + f"\nProductos con stock menor a {cant_bajo_stock}\n")
         for producto in productos_bajo_stock:
             ID, NOMBRE, DESCRIPCION, CANTIDAD, PRECIO, CATEGORIA = producto
             print(f" ID: {ID}\n NOMBRE: {NOMBRE}\n DESCRIPCION: {DESCRIPCION}\n CANTIDAD: {CANTIDAD}\n PRECIO: {PRECIO}\n CATEGORIA: {CATEGORIA}\n")
@@ -389,12 +380,12 @@ def reporte_bajo_stock():
         print(Back.BLACK + Fore.RED + "No hay productos con stock por debajo de la CANTIDAD especificada.")
                 
     fin_conexion(conexion)
-    limpiar_color()
     
 while True:
 
     mostrar_menu()
     opcion = obtener_opcion()
+    mostrar_opcion(opcion)
     match opcion:
         case 1:
             alta_productos()
@@ -410,13 +401,11 @@ while True:
             reporte_bajo_stock()
         case 7:
             print("")
-            print(Style.BRIGHT + Fore.CYAN)
-            print("***************************")
-            print("*  SALIENDO DEL PROGRAMA  *")
-            print("***************************\n")
-            print("GRACIAS POR UTILIZAR NUESTRO SOFTWARE\n CONTROL DE STOCK - TALENTO TECH")
-            limpiar_color()
+            print(Style.BRIGHT + Fore.CYAN + "***************************")
+            print(Style.BRIGHT + Fore.CYAN + "*  SALIENDO DEL PROGRAMA  *")
+            print(Style.BRIGHT + Fore.CYAN + "***************************\n")
+            print(Style.BRIGHT + Fore.CYAN + "GRACIAS POR UTILIZAR NUESTRO SOFTWARE\n GESTION DE PRODUCTOS - TALENTO TECH")
             break
         case _:
             print(Back.BLACK + Fore.RED +"Opción no válida. Por favor, elige una opción entre 1 y 7.")
-            limpiar_color()
+
